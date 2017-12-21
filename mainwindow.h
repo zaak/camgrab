@@ -5,6 +5,8 @@
 #include <QCamera>
 #include <QCameraInfo>
 #include <QCameraViewfinder>
+#include <QComboBox>
+#include <QSpacerItem>
 
 namespace Ui {
 class MainWindow;

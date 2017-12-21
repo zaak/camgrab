@@ -7,10 +7,15 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    Console::setOutputControl(ui->consoleOutput);
+
+    QWidget *horizontalSpacer = new QWidget();
+    horizontalSpacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+    ui->mainToolBar->addWidget(horizontalSpacer);
+
+    ui->mainToolBar->addWidget(new QComboBox());
 
     ui->consoleDockWidget->setVisible(false);
-
-    Console::setOutputControl(ui->consoleOutput);
 }
 
 MainWindow::~MainWindow()
@@ -18,10 +23,10 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::startCamera(bool a)
+void MainWindow::startCamera(bool enable)
 {
     QList<QCameraInfo> cameras = QCameraInfo::availableCameras();
-    qDebug() << cameras.size();
+
     foreach (const QCameraInfo &cameraInfo, cameras) {
 
         qDebug() << cameraInfo.deviceName();
@@ -37,4 +42,3 @@ void MainWindow::startCamera(bool a)
         ui->statusBar->showMessage("Aaaaa");
     }
 }
-
