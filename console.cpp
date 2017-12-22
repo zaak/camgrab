@@ -1,4 +1,4 @@
 #include "console.h"
 
-QTextEdit *Console::outputControl;
+QTextEdit *Console::output;
 

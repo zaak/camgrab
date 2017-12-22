@@ -1,0 +1,31 @@
+#ifndef CAMERAMANAGER_H
+#define CAMERAMANAGER_H
+
+#include <QObject>
+#include <QList>
+#include <QCameraInfo>
+#include <QSharedPointer>
+
+class CameraManager: public QObject
+{
+    Q_OBJECT
+private:
+    QSharedPointer<QCamera> selectedCamera;
+    QCameraInfo selectedCameraInfo;
+
+public:
+    CameraManager(QObject *parent = 0);
+    QList<QCameraInfo> listCameras();
+    QSharedPointer<QCamera> getCameraByDeviceName(const QString &deviceName);
+    QSharedPointer<QCamera> getSelectedCamera();
+    QCameraInfo &getSelectedCameraInfo();
+
+public slots:
+    void changeSelectedCamera(const QVariant &variant);
+    void changeSelectedCamera(const QString &deviceName);
+
+signals:
+    void changedSelectedCamera(const QSharedPointer<QCamera> &);
+};
+
+#endif // CAMERAMANAGER_H

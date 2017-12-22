@@ -65,7 +65,6 @@ void MainWindow::toggleCamera(bool enable)
     QCameraInfo cameraInfo = cameraManager->getSelectedCameraInfo();
 
     qDebug() << "MainWindow::toggleCamera" << camera;
-    qDebug() << camera->availableMetaData();
 
     if (enable) {
         Console::log(QString("Starting camera %1").arg(cameraInfo.description()));

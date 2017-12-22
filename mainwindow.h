@@ -7,6 +7,8 @@
 #include <QCameraViewfinder>
 #include <QComboBox>
 #include <QSpacerItem>
+#include "cameramanager.h"
+#include "dataawarecombobox.h"
 
 namespace Ui {
 class MainWindow;
@@ -23,9 +25,15 @@ public:
 private:
     Ui::MainWindow *ui;
     QCamera *camera;
+    CameraManager *cameraManager;
+    DataAwareComboBox *cameraComboBox;
+    QAction *cameraComboBoxAction;
 
-public slots:
-    void startCamera(bool a);
+    void detectCameras();
+
+private slots:
+    void toggleCamera(bool enable);
+    void onCameraChanged(const QSharedPointer<QCamera> &cameraPtr);
 };
 
 #endif // MAINWINDOW_H

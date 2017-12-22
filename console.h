@@ -6,17 +6,23 @@
 class Console
 {
 private:
-    static QTextEdit *outputControl;
+    static QTextEdit *output;
 
 public:
     static void setOutputControl(QTextEdit *textEdit)
     {
-        outputControl = textEdit;
+        output = textEdit;
     }
 
-    static void log(QString message)
+    static void log(QString message, QColor color = Qt::black)
     {
-        outputControl->append(message + "\n");
+        output->setTextColor(color);
+        output->append(message);
+    }
+
+    static void error(QString message)
+    {
+        log(message, Qt::red);
     }
 };
 

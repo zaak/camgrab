@@ -26,11 +26,15 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
-    console.cpp
+    console.cpp \
+    cameramanager.cpp \
+    dataawarecombobox.cpp
 
 HEADERS += \
         mainwindow.h \
-    console.h
+    console.h \
+    cameramanager.h \
+    dataawarecombobox.h
 
 FORMS += \
         mainwindow.ui
