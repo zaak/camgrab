@@ -35,15 +35,15 @@ QSharedPointer<QCamera> CameraManager::getCameraByDeviceName(const QString &devi
 
 void CameraManager::changeSelectedCamera(const QVariant &variant)
 {
-    changeSelectedCamera(variant.toString());
+    changeSelectedCamera(qvariant_cast<QCameraInfo>(variant));
 }
 
-void CameraManager::changeSelectedCamera(const QString &deviceName)
+void CameraManager::changeSelectedCamera(const QCameraInfo &cameraInfo)
 {
-    QSharedPointer<QCamera> cameraPtr = getCameraByDeviceName(deviceName);
+    QSharedPointer<QCamera> cameraPtr = getCameraByDeviceName(cameraInfo.deviceName());
 
     if (cameraPtr.isNull()) {
-        Console::error(QString("Couln't change selected camera to %1 (): null pointer returned").arg(deviceName));
+        Console::error(QString("Couln't change selected camera to %1 (): null pointer returned").arg(cameraInfo.deviceName()));
     }
 
     selectedCamera = cameraPtr;

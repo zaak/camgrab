@@ -6,6 +6,8 @@
 #include <QCameraInfo>
 #include <QSharedPointer>
 
+Q_DECLARE_METATYPE(QCameraInfo)
+
 class CameraManager: public QObject
 {
     Q_OBJECT
@@ -22,7 +24,7 @@ public:
 
 public slots:
     void changeSelectedCamera(const QVariant &variant);
-    void changeSelectedCamera(const QString &deviceName);
+    void changeSelectedCamera(const QCameraInfo &cameraInfo);
 
 signals:
     void changedSelectedCamera(const QSharedPointer<QCamera> &);

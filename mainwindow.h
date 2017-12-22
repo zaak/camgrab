@@ -7,6 +7,7 @@
 #include <QCameraViewfinder>
 #include <QComboBox>
 #include <QSpacerItem>
+#include <QVariant>
 #include "cameramanager.h"
 #include "dataawarecombobox.h"
 

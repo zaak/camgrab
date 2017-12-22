@@ -45,10 +45,10 @@ void MainWindow::detectCameras()
 
     foreach (const QCameraInfo &cameraInfo, cameras) {
         Console::log(cameraInfo.description());
-        cameraComboBox->addItem(cameraInfo.description(), cameraInfo.deviceName());
+        cameraComboBox->addItem(cameraInfo.description(), QVariant::fromValue(cameraInfo));
     }
 
-    cameraManager->changeSelectedCamera(cameras.first().deviceName());
+    cameraManager->changeSelectedCamera(cameras.first());
 }
 
 void MainWindow::onCameraChanged(const QSharedPointer<QCamera> &cameraPtr)
@@ -64,12 +64,13 @@ void MainWindow::toggleCamera(bool enable)
     QCamera *camera = cameraManager->getSelectedCamera().data();
     QCameraInfo cameraInfo = cameraManager->getSelectedCameraInfo();
 
-    qDebug() << "MainWindow::toggleCamera" << camera;
-    qDebug() << camera->availableMetaData();
-
     if (enable) {
         Console::log(QString("Starting camera %1").arg(cameraInfo.description()));
+        camera->load();
         camera->start();
+
+        qDebug() << "MainWindow::toggleCamera" << camera->supportedViewfinderResolutions();
+        qDebug() << "MainWindow::toggleCamera" << camera->supportedViewfinderPixelFormats();
     } else {
         Console::log(QString("Stopping camera %1").arg(cameraInfo.description()));
         camera->stop();
