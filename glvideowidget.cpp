@@ -89,7 +89,7 @@ void GLVideoWidget::renderImage()
 
             glPixelZoom(1, -1);
 
-            glDrawPixels(mResizedImg.width(), mResizedImg.height(), GL_RGBA, GL_UNSIGNED_BYTE, mResizedImg.bits());
+            glDrawPixels(mResizedImg.width(), mResizedImg.height(), GL_BGRA, GL_UNSIGNED_BYTE, mResizedImg.bits());
 
         }
         glPopMatrix();
@@ -148,9 +148,6 @@ bool GLVideoWidget::renderFrame(const QVideoFrame& buffer)
     }
 
     frame.unmap();
-
-
-    qDebug() << img;
 
     return showImage(img);
 }
