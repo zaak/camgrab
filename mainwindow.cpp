@@ -61,7 +61,7 @@ void MainWindow::onCameraChanged(const QSharedPointer<QCamera> &cameraPtr)
     ui->actionToggleCamera->setChecked(false);
 
     QCamera *camera = cameraPtr.data();
-    camera->setViewfinder(ui->cameraViewFinder);
+    camera->setViewfinder(ui->cameraViewFinder->videoSurface());
 }
 
 void MainWindow::toggleCamera(bool enable)

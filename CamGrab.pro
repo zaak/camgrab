@@ -5,6 +5,7 @@
 #-------------------------------------------------
 
 QT       += core gui multimedia multimediawidgets
+QT       += opengl
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -28,13 +29,17 @@ SOURCES += \
         mainwindow.cpp \
     console.cpp \
     cameramanager.cpp \
-    dataawarecombobox.cpp
+    dataawarecombobox.cpp \
+    glvideosurface.cpp \
+    glvideowidget.cpp
 
 HEADERS += \
         mainwindow.h \
     console.h \
     cameramanager.h \
-    dataawarecombobox.h
+    dataawarecombobox.h \
+    glvideosurface.h \
+    glvideowidget.h
 
 FORMS += \
         mainwindow.ui
