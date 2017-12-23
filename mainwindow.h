@@ -7,7 +7,9 @@
 #include <QCameraViewfinder>
 #include <QComboBox>
 #include <QSpacerItem>
+#include <QTimer>
 #include <QVariant>
+#include <QVideoProbe>
 #include "cameramanager.h"
 #include "dataawarecombobox.h"
 
@@ -29,12 +31,17 @@ private:
     CameraManager *cameraManager;
     DataAwareComboBox *cameraComboBox;
     QAction *cameraComboBoxAction;
+    QTimer *fpsTimer;
+    QVideoProbe *fpsProbe;
 
     void detectCameras();
+    unsigned int framesInCurrentSecond = 0;
 
 private slots:
     void toggleCamera(bool enable);
+    void processFrame(const QVideoFrame &frame);
     void onCameraChanged(const QSharedPointer<QCamera> &cameraPtr);
+    void updateFps();
 };
 
 #endif // MAINWINDOW_H

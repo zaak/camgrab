@@ -10,14 +10,6 @@ CameraManager::CameraManager(QObject *parent)
 QList<QCameraInfo> CameraManager::listCameras()
 {
     return QCameraInfo::availableCameras();
-
-    ////        if (cameraInfo.deviceName() == "mycamera")
-    //        camera = new QCamera(QCameraInfo::defaultCamera());
-
-    //        camera->setViewfinder(ui->cameraViewFinder);
-    //        camera->start();
-
-    //        ui->statusBar->showMessage("Aaaaa");
 }
 
 QSharedPointer<QCamera> CameraManager::getCameraByDeviceName(const QString &deviceName)
