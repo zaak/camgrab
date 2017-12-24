@@ -1,10 +1,12 @@
 #ifndef GLVIDEOWIDGET_H
 #define GLVIDEOWIDGET_H
 
-#include <QGLWidget>
+#include <QOpenGLWidget>
+#include <QOpenGLShader>
+#include <QOpenGLShaderProgram>
 #include "glvideosurface.h"
 
-class GLVideoWidget : public QGLWidget
+class GLVideoWidget : public QOpenGLWidget
 {
     Q_OBJECT
 private:
@@ -40,6 +42,10 @@ private:
     int mRenderHeight;
     int mRenderPosX;
     int mRenderPosY;
+
+    QOpenGLShader *vShader;
+    QOpenGLShader *fShader;
+    QOpenGLShaderProgram *shaderProgram;
 
     void recalculatePosition();
 };

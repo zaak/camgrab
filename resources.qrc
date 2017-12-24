@@ -7,5 +7,6 @@
         <file>resources/images/photo.png</file>
         <file>resources/images/switch.png</file>
         <file>resources/images/shell.png</file>
+        <file>resources/shaders/blur.frag</file>
     </qresource>
 </RCC>

@@ -1,8 +1,9 @@
 #include "glvideowidget.h"
 #include <QDebug>
+#include <QOpenGLTexture>
 
 GLVideoWidget::GLVideoWidget(QWidget *parent):
-    QGLWidget(parent),
+    QOpenGLWidget(parent),
     glVideoSurface(new GLVideoSurface(this))
 {
     mBgColor = QColor::fromRgb(150, 150, 150);
@@ -17,15 +18,32 @@ GLVideoSurface *GLVideoWidget::videoSurface()
 
 void GLVideoWidget::initializeGL()
 {
-    QGLWidget::initializeGL();
+    //QOpenGLWidget::initializeGL();
 
-    makeCurrent();
+    //makeCurrent();
     //initializeOpenGLFunctions();
 
-    float r = ((float)mBgColor.darker().red())/255.0f;
-    float g = ((float)mBgColor.darker().green())/255.0f;
-    float b = ((float)mBgColor.darker().blue())/255.0f;
-    glClearColor(r,g,b,1.0f);
+//    float r = ((float)mBgColor.darker().red())/255.0f;
+//    float g = ((float)mBgColor.darker().green())/255.0f;
+//    float b = ((float)mBgColor.darker().blue())/255.0f;
+//    glClearColor(r,g,b,1.0f);
+
+
+//    vShader = new QOpenGLShader(QOpenGLShader::Vertex);
+//    qDebug() << "vShader " << vShader->compileSourceFile(":/resources/shaders/blur.vert");
+
+    fShader = new QOpenGLShader(QOpenGLShader::Fragment);
+    qDebug() << "fShader " << fShader->compileSourceFile(":/resources/shaders/blur.frag");
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+
+    shaderProgram = new QOpenGLShaderProgram(this);
+ //   shaderProgram->addShader(vShader);
+    shaderProgram->addShader(fShader);
+    shaderProgram->link();
+    shaderProgram->bind();
 }
 
 void GLVideoWidget::resizeGL(int width, int height)
@@ -39,6 +57,13 @@ void GLVideoWidget::resizeGL(int width, int height)
     glOrtho(0, width, -height, 0, 0, 1);
 
     glMatrixMode(GL_MODELVIEW);
+
+//    QSurfaceFormat format;
+//    format.setDepthBufferSize(24);
+//    format.setStencilBufferSize(8);
+//    format.setVersion(3, 2);
+//    format.setProfile(QSurfaceFormat::CoreProfile);
+//    setFormat(format);
 
     recalculatePosition();
 
@@ -89,8 +114,16 @@ void GLVideoWidget::renderImage()
 
             glPixelZoom(1, -1);
 
+            QOpenGLTexture *texture = new QOpenGLTexture(mResizedImg);
+            texture->bind(0);
+            shaderProgram->setUniformValue("colorTexturem", 0);
+            shaderProgram->setUniformValue("resolution", mResizedImg.size());
+            shaderProgram->setUniformValue("renderX", mRenderPosX);
+            shaderProgram->setUniformValue("renderY", mRenderPosY);
+
             glDrawPixels(mResizedImg.width(), mResizedImg.height(), GL_BGRA, GL_UNSIGNED_BYTE, mResizedImg.bits());
 
+            delete texture;
         }
         glPopMatrix();
 
@@ -103,17 +136,17 @@ void GLVideoWidget::recalculatePosition()
 {
     mImgRatio = (float)mRenderQtImg.width()/(float)mRenderQtImg.height();
 
-    mRenderWidth = this->size().width();
+    mRenderWidth = width();
     mRenderHeight = floor(mRenderWidth / mImgRatio);
 
-    if (mRenderHeight > this->size().height())
+    if (mRenderHeight > height())
     {
-        mRenderHeight = this->size().height();
+        mRenderHeight = height();
         mRenderWidth = floor(mRenderHeight * mImgRatio);
     }
 
-    mRenderPosX = floor((this->size().width() - mRenderWidth) / 2);
-    mRenderPosY = -floor((this->size().height() - mRenderHeight) / 2);
+    mRenderPosX = floor((width() - mRenderWidth) / 2);
+    mRenderPosY = -floor((height() - mRenderHeight) / 2);
 
     mResizedImg = QImage();
 }
