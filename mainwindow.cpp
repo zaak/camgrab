@@ -54,6 +54,10 @@ void MainWindow::detectCameras()
     }
 
     cameraManager->changeSelectedCamera(cameras.first());
+
+    if (cameras.size() == 1) {
+        cameraComboBoxAction->setDisabled(true);
+    }
 }
 
 void MainWindow::onCameraChanged(const QSharedPointer<QCamera> &cameraPtr)
