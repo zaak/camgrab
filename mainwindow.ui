@@ -56,12 +56,8 @@
    <addaction name="actionToggleCamera"/>
    <addaction name="separator"/>
    <addaction name="actionGrabImage"/>
-   <addaction name="actionRecordMovie"/>
-   <addaction name="separator"/>
    <addaction name="actionOutputFolder"/>
-   <addaction name="separator"/>
    <addaction name="actionOpenSettings"/>
-   <addaction name="separator"/>
    <addaction name="actionToggleConsole"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
@@ -81,8 +77,8 @@
       <widget class="QTextEdit" name="consoleOutput">
        <property name="font">
         <font>
-         <family>Monospace</family>
-         <pointsize>8</pointsize>
+         <family>DejaVu Sans Mono</family>
+         <pointsize>7</pointsize>
         </font>
        </property>
        <property name="autoFillBackground">
@@ -121,6 +117,9 @@
    </property>
   </action>
   <action name="actionGrabImage">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="icon">
     <iconset resource="resources.qrc">
      <normaloff>:/resources/images/photo.png</normaloff>:/resources/images/photo.png</iconset>
@@ -133,6 +132,9 @@
    </property>
   </action>
   <action name="actionRecordMovie">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="icon">
     <iconset resource="resources.qrc">
      <normaloff>:/resources/images/movie.png</normaloff>:/resources/images/movie.png</iconset>
@@ -226,6 +228,38 @@
     <hint type="sourcelabel">
      <x>399</x>
      <y>463</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionToggleCamera</sender>
+   <signal>triggered(bool)</signal>
+   <receiver>actionGrabImage</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionToggleCamera</sender>
+   <signal>triggered(bool)</signal>
+   <receiver>actionRecordMovie</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
     </hint>
     <hint type="destinationlabel">
      <x>-1</x>
