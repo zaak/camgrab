@@ -6,9 +6,9 @@ GLVideoWidget::GLVideoWidget(QWidget *parent):
     QOpenGLWidget(parent),
     glVideoSurface(new GLVideoSurface(this))
 {
-    mBgColor = QColor::fromRgb(150, 150, 150);
 
     connect(glVideoSurface, SIGNAL(frameReceived(QVideoFrame)), this, SLOT(renderFrame(QVideoFrame)));
+    connect(glVideoSurface, SIGNAL(presentationStopped()), this, SLOT(cleanup()));
 }
 
 GLVideoSurface *GLVideoWidget::videoSurface()
@@ -18,170 +18,89 @@ GLVideoSurface *GLVideoWidget::videoSurface()
 
 void GLVideoWidget::initializeGL()
 {
-    //QOpenGLWidget::initializeGL();
+    QOpenGLWidget::initializeGL();
 
-    //makeCurrent();
-    //initializeOpenGLFunctions();
-
-//    float r = ((float)mBgColor.darker().red())/255.0f;
-//    float g = ((float)mBgColor.darker().green())/255.0f;
-//    float b = ((float)mBgColor.darker().blue())/255.0f;
-//    glClearColor(r,g,b,1.0f);
-
-
-//    vShader = new QOpenGLShader(QOpenGLShader::Vertex);
-//    qDebug() << "vShader " << vShader->compileSourceFile(":/resources/shaders/blur.vert");
-
-    fShader = new QOpenGLShader(QOpenGLShader::Fragment);
-    qDebug() << "fShader " << fShader->compileSourceFile(":/resources/shaders/blur.frag");
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-
-    shaderProgram = new QOpenGLShaderProgram(this);
- //   shaderProgram->addShader(vShader);
-    shaderProgram->addShader(fShader);
-    shaderProgram->link();
-    shaderProgram->bind();
- //   shaderProgram->release();
+    glClearColor(.3f, .3f, .3f, 1.0f);
 }
 
 void GLVideoWidget::resizeGL(int width, int height)
 {
-    makeCurrent();
-    glViewport(0, 0, (GLint)width, (GLint)height);
-
+    glViewport(0, 0, width, height);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-
     glOrtho(0, width, -height, 0, 0, 1);
-
     glMatrixMode(GL_MODELVIEW);
+    calculateRenderPosition();
 
-//    QSurfaceFormat format;
-//    format.setDepthBufferSize(24);
-//    format.setStencilBufferSize(8);
-//    format.setVersion(3, 2);
-//    format.setProfile(QSurfaceFormat::CoreProfile);
-//    setFormat(format);
-
-    recalculatePosition();
-
-    emit imageSizeChanged(mRenderWidth, mRenderHeight);
-
-    updateScene();
-}
-
-void GLVideoWidget::updateScene()
-{
-    if (this->isVisible()) update();
+    update();
 }
 
 void GLVideoWidget::paintGL()
 {
-    makeCurrent();
-
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    renderImage();
+    if (!renderedImage.isNull())
+    {
+        QImage scaledImage = renderedImage.scaled(renderSize, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+        renderImage(scaledImage);
+    }
 }
 
-void GLVideoWidget::renderImage()
+void GLVideoWidget::renderImage(const QImage &image)
 {
-    makeCurrent();
-
     glClear(GL_COLOR_BUFFER_BIT);
+    glLoadIdentity();
 
-    if (!mRenderQtImg.isNull())
+    glPushMatrix();
     {
-        glLoadIdentity();
-
-        glPushMatrix();
-        {
-            if (mResizedImg.width() <= 0)
-            {
-                if (mRenderWidth == mRenderQtImg.width() && mRenderHeight == mRenderQtImg.height())
-                    mResizedImg = mRenderQtImg;
-                else
-                    mResizedImg = mRenderQtImg.scaled(QSize(mRenderWidth, mRenderHeight),
-                                                      Qt::IgnoreAspectRatio,
-                                                      Qt::SmoothTransformation);
-            }
-
-            // ---> Centering image in draw area
-
-            glRasterPos2i(mRenderPosX, mRenderPosY);
-
-            glPixelZoom(1, -1);
-
-            QOpenGLTexture *texture = new QOpenGLTexture(mResizedImg);
-            texture->bind(0);
-            shaderProgram->setUniformValue("colorTexturem", 0);
-            shaderProgram->setUniformValue("resolution", mResizedImg.size());
-            shaderProgram->setUniformValue("renderX", mRenderPosX);
-            shaderProgram->setUniformValue("renderY", mRenderPosY);
-
-            glDrawPixels(mResizedImg.width(), mResizedImg.height(), GL_BGRA, GL_UNSIGNED_BYTE, mResizedImg.bits());
-
-            delete texture;
-        }
-        glPopMatrix();
-
-        // end
-        glFlush();
+        glRasterPos2i(renderPosition.x(), renderPosition.y());
+        glPixelZoom(1, -1);
+        glDrawPixels(image.width(), image.height(), GL_BGRA, GL_UNSIGNED_BYTE, image.bits());
     }
+    glPopMatrix();
+
+    glFlush();
 }
 
-void GLVideoWidget::recalculatePosition()
+void GLVideoWidget::calculateRenderPosition()
 {
-    mImgRatio = (float)mRenderQtImg.width()/(float)mRenderQtImg.height();
+    float dimensionRatio = (float)renderedImage.width()/(float)renderedImage.height();
 
-    mRenderWidth = width();
-    mRenderHeight = floor(mRenderWidth / mImgRatio);
+    renderSize.setWidth(width());
+    renderSize.setHeight(floor(width() / dimensionRatio));
 
-    if (mRenderHeight > height())
+    if (renderSize.height() > height())
     {
-        mRenderHeight = height();
-        mRenderWidth = floor(mRenderHeight * mImgRatio);
+        renderSize.setHeight(height());
+        renderSize.setWidth(floor(height() * dimensionRatio));
     }
 
-    mRenderPosX = floor((width() - mRenderWidth) / 2);
-    mRenderPosY = -floor((height() - mRenderHeight) / 2);
-
-    mResizedImg = QImage();
+    renderPosition.setX(floor((width() - renderSize.width()) / 2));
+    renderPosition.setY(-floor((height() - renderSize.height()) / 2));
 }
 
-bool GLVideoWidget::showImage(const QImage& image)
+void GLVideoWidget::showImage(const QImage& image)
 {
-    mRenderQtImg = image;
-
-    recalculatePosition();
-
-    updateScene();
-
-    return true;
+    renderedImage = image;
+    calculateRenderPosition();
+    update();
 }
 
-bool GLVideoWidget::renderFrame(const QVideoFrame& buffer)
+void GLVideoWidget::renderFrame(const QVideoFrame& buffer)
 {
-    QImage img;
+    QImage frameImage;
     QVideoFrame frame(buffer);
     frame.map(QAbstractVideoBuffer::ReadOnly);
-    QImage::Format imageFormat = QVideoFrame::imageFormatFromPixelFormat(frame.pixelFormat());
+    QImage::Format frameImageFormat = QVideoFrame::imageFormatFromPixelFormat(frame.pixelFormat());
 
-    if (imageFormat != QImage::Format_Invalid) {
-        img = QImage(frame.bits(),
-                     frame.width(),
-                     frame.height(),
-                     // frame.bytesPerLine(),
-                     imageFormat);
-    } else {
-        int nbytes = frame.mappedBytes();
-        img = QImage::fromData(frame.bits(), nbytes);
+    if (frameImageFormat != QImage::Format_Invalid) {
+        showImage(QImage(frame.bits(), frame.width(), frame.height(), frameImageFormat));
+        frame.unmap();
     }
+}
 
-    frame.unmap();
-
-    return showImage(img);
+void GLVideoWidget::cleanup()
+{
+    renderedImage = QImage();
+    update();
 }

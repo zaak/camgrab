@@ -11,43 +11,32 @@ class GLVideoWidget : public QOpenGLWidget
     Q_OBJECT
 private:
     GLVideoSurface *glVideoSurface;
+
 public:
     explicit GLVideoWidget(QWidget *parent = nullptr);
     GLVideoSurface *videoSurface();
-signals:
-    void imageSizeChanged( int outW, int outH ); /// Used to resize the image outside the widget
 
-public slots:
-    bool showImage(const QImage& image); /// Used to set the image to be viewed
-    bool renderFrame(const QVideoFrame& frame);
 
 protected:
     void initializeGL(); /// OpenGL initialization
     void paintGL(); /// OpenGL Rendering
-    void resizeGL(int width, int height);        /// Widget Resize Event
+    void resizeGL(int width, int height);
 
-    void updateScene();
-    void renderImage();
+    void renderImage(const QImage &image);
 
 private:
+    QImage renderedImage;
+    QPoint renderPosition;
+    QSize renderSize;
 
-    QImage mRenderQtImg;           /// Qt image to be rendered
-    QImage mResizedImg;
+    void calculateRenderPosition();
 
-    QColor mBgColor;		/// Background color
+private slots:
+    void cleanup();
 
-    float mImgRatio;             /// height/width ratio
-
-    int mRenderWidth;
-    int mRenderHeight;
-    int mRenderPosX;
-    int mRenderPosY;
-
-    QOpenGLShader *vShader;
-    QOpenGLShader *fShader;
-    QOpenGLShaderProgram *shaderProgram;
-
-    void recalculatePosition();
+public slots:
+    void showImage(const QImage& image);
+    void renderFrame(const QVideoFrame& frame);
 };
 
 #endif // GLVIDEOWIDGET_H

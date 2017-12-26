@@ -6,16 +6,19 @@
 class GLVideoSurface: public QAbstractVideoSurface
 {
     Q_OBJECT
+
 public:
     explicit GLVideoSurface(QObject *parent = nullptr);
 
-    QList<QVideoFrame::PixelFormat> supportedPixelFormats(
-                QAbstractVideoBuffer::HandleType handleType = QAbstractVideoBuffer::NoHandle) const;
+    QList<QVideoFrame::PixelFormat> supportedPixelFormats(QAbstractVideoBuffer::HandleType handleType = QAbstractVideoBuffer::NoHandle) const;
     bool present(const QVideoFrame &frame);
+    bool start(const QVideoSurfaceFormat &format);
+    void stop();
+
 signals:
     void frameReceived(const QVideoFrame& frame);
-
-public slots:
+    void presentationStarted();
+    void presentationStopped();
 };
 
 #endif // GLVIDEOSURFACE_H

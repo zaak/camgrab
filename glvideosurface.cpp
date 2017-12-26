@@ -1,9 +1,7 @@
 #include "glvideosurface.h"
+#include <QDebug>
 
-GLVideoSurface::GLVideoSurface(QObject *parent) : QAbstractVideoSurface(parent)
-{
-
-}
+GLVideoSurface::GLVideoSurface(QObject *parent) : QAbstractVideoSurface(parent) {}
 
 QList<QVideoFrame::PixelFormat> GLVideoSurface::supportedPixelFormats(QAbstractVideoBuffer::HandleType handleType) const
 {
@@ -48,4 +46,18 @@ bool GLVideoSurface::present(const QVideoFrame &frame)
     emit frameReceived(frame);
 
     return true;
+}
+
+bool GLVideoSurface::start(const QVideoSurfaceFormat &format)
+{
+    QAbstractVideoSurface::start(format);
+
+    emit presentationStarted();
+}
+
+void GLVideoSurface::stop()
+{
+    QAbstractVideoSurface::stop();
+
+    emit presentationStopped();
 }

@@ -32,7 +32,6 @@ private:
     DataAwareComboBox *cameraComboBox;
     QAction *cameraComboBoxAction;
     QTimer *fpsTimer;
-    QVideoProbe *fpsProbe;
 
     void detectCameras();
     unsigned int framesInCurrentSecond = 0;

@@ -6,8 +6,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
     cameraManager(new CameraManager(this)),
-    fpsTimer(new QTimer(this)),
-    fpsProbe(new QVideoProbe(this))
+    fpsTimer(new QTimer(this))
 {
     ui->setupUi(this);
     Console::setOutputControl(ui->consoleOutput);
@@ -23,7 +22,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(cameraManager, SIGNAL(changedSelectedCamera(QSharedPointer<QCamera>)), this, SLOT(onCameraChanged(QSharedPointer<QCamera>)));
 
     connect(fpsTimer, SIGNAL(timeout()), this, SLOT(updateFps()));
-    connect(fpsProbe, SIGNAL(videoFrameProbed(QVideoFrame)), this, SLOT(processFrame(QVideoFrame)));
+    connect(ui->cameraViewFinder->videoSurface(), SIGNAL(frameReceived(QVideoFrame)), this, SLOT(processFrame(QVideoFrame)));
 
     //ui->consoleDockWidget->setVisible(false);
 
@@ -74,8 +73,6 @@ void MainWindow::toggleCamera(bool enable)
     QCameraInfo cameraInfo = cameraManager->getSelectedCameraInfo();
 
     if (enable) {
-        fpsProbe->setSource(camera); // Returns true, hopefully.
-
         Console::log(QString("Starting camera %1").arg(cameraInfo.description()));
         camera->load();
         camera->start();
@@ -94,10 +91,6 @@ void MainWindow::toggleCamera(bool enable)
 void MainWindow::processFrame(const QVideoFrame &frame)
 {
     ++framesInCurrentSecond;
-    //qDebug() << frame.width() << "x" << frame.height();
-
-//    frame.map(QAbstractVideoBuffer::WriteOnly);
-//    frame.unmap();
 }
 
 void MainWindow::updateFps()
