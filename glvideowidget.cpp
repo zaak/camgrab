@@ -44,6 +44,7 @@ void GLVideoWidget::initializeGL()
     shaderProgram->addShader(fShader);
     shaderProgram->link();
     shaderProgram->bind();
+ //   shaderProgram->release();
 }
 
 void GLVideoWidget::resizeGL(int width, int height)
