@@ -10,12 +10,12 @@ class GLVideoWidget : public QOpenGLWidget
 {
     Q_OBJECT
 private:
-    GLVideoSurface *glVideoSurface;
+    GLVideoSurface *videoSurface;
 
 public:
     explicit GLVideoWidget(QWidget *parent = nullptr);
-    GLVideoSurface *videoSurface();
-
+    GLVideoSurface *getVideoSurface();
+    QImage &getRenderedImage();
 
 protected:
     void initializeGL();

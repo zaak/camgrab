@@ -47,6 +47,8 @@ private slots:
     void onCameraChanged(const QSharedPointer<QCamera> &cameraPtr);
     void updateFps();
     void chooseOutputDirectory();
+    void openOutputDirectory();
+    bool grabImage();
 };
 
 #endif // MAINWINDOW_H

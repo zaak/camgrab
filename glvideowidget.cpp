@@ -4,16 +4,16 @@
 
 GLVideoWidget::GLVideoWidget(QWidget *parent):
     QOpenGLWidget(parent),
-    glVideoSurface(new GLVideoSurface(this))
+    videoSurface(new GLVideoSurface(this))
 {
 
-    connect(glVideoSurface, SIGNAL(frameReceived(QVideoFrame)), this, SLOT(renderFrame(QVideoFrame)));
-    connect(glVideoSurface, SIGNAL(presentationStopped()), this, SLOT(cleanup()));
+    connect(videoSurface, SIGNAL(frameReceived(QVideoFrame)), this, SLOT(renderFrame(QVideoFrame)));
+    connect(videoSurface, SIGNAL(presentationStopped()), this, SLOT(cleanup()));
 }
 
-GLVideoSurface *GLVideoWidget::videoSurface()
+GLVideoSurface *GLVideoWidget::getVideoSurface()
 {
-    return glVideoSurface;
+    return videoSurface;
 }
 
 void GLVideoWidget::initializeGL()
@@ -103,4 +103,9 @@ void GLVideoWidget::cleanup()
 {
     renderedImage = QImage();
     update();
+}
+
+QImage &GLVideoWidget::getRenderedImage()
+{
+    return renderedImage;
 }

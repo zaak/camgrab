@@ -2,6 +2,8 @@
 #include "ui_mainwindow.h"
 #include "console.h"
 #include <QFileDialog>
+#include <QDesktopServices>
+#include <QDate>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -25,9 +27,10 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(cameraManager, SIGNAL(changedSelectedCamera(QSharedPointer<QCamera>)), this, SLOT(onCameraChanged(QSharedPointer<QCamera>)));
 
     connect(fpsTimer, SIGNAL(timeout()), this, SLOT(updateFps()));
-    connect(ui->cameraViewFinder->videoSurface(), SIGNAL(frameReceived(QVideoFrame)), this, SLOT(processFrame(QVideoFrame)));
+    connect(ui->cameraViewFinder->getVideoSurface(), SIGNAL(frameReceived(QVideoFrame)), this, SLOT(processFrame(QVideoFrame)));
 
-    //ui->consoleDockWidget->setVisible(false);
+    ui->consoleDockWidget->setVisible(false);
+    ui->settingsDockWidget->setVisible(false);
 
     detectCameras();
 }
@@ -67,7 +70,7 @@ void MainWindow::onCameraChanged(const QSharedPointer<QCamera> &cameraPtr)
     ui->actionToggleCamera->setChecked(false);
 
     QCamera *camera = cameraPtr.data();
-    camera->setViewfinder(ui->cameraViewFinder->videoSurface());
+    camera->setViewfinder(ui->cameraViewFinder->getVideoSurface());
 }
 
 void MainWindow::toggleCamera(bool enable)
@@ -128,4 +131,30 @@ void MainWindow::writeSettings()
     settings.beginGroup("output");
     settings.setValue("directory", outputDirectoryPath);
     settings.endGroup();
+}
+
+void MainWindow::openOutputDirectory()
+{
+    QString outputDirPath = QDir::toNativeSeparators(outputDirectoryPath);
+    QDesktopServices::openUrl(QUrl::fromLocalFile(outputDirPath));
+}
+
+
+bool MainWindow::grabImage()
+{
+    QImage &renderedImage = ui->cameraViewFinder->getRenderedImage();
+
+    QString fileName = QDateTime::currentDateTime().toString("''yyyyMMdd_HHmmsszzz'.jpg'");
+
+    QString filePath = QDir(QDir::toNativeSeparators(outputDirectoryPath)).filePath(fileName);
+
+    bool imageSaved = renderedImage.save(filePath, "JPG", 100);
+
+    if (imageSaved) {
+        Console::log(QString("Saved image to %1").arg(filePath));
+    } else {
+        Console::log(QString("Cold not save image to %1").arg(filePath));
+    }
+
+    return imageSaved;
 }
