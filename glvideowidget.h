@@ -18,8 +18,8 @@ public:
 
 
 protected:
-    void initializeGL(); /// OpenGL initialization
-    void paintGL(); /// OpenGL Rendering
+    void initializeGL();
+    void paintGL();
     void resizeGL(int width, int height);
 
     void renderImage(const QImage &image);

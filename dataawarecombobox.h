@@ -11,7 +11,7 @@ private slots:
     void triggerVariantActivated(int index);
 
 public:
-    DataAwareComboBox(QWidget *parent = 0);
+    DataAwareComboBox(QWidget *parent = nullptr);
 
 signals:
     void activated(const QVariant &);

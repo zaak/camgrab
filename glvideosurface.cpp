@@ -53,6 +53,8 @@ bool GLVideoSurface::start(const QVideoSurfaceFormat &format)
     QAbstractVideoSurface::start(format);
 
     emit presentationStarted();
+
+    return true;
 }
 
 void GLVideoSurface::stop()

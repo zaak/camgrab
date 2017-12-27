@@ -6,6 +6,7 @@
 #include <QCameraInfo>
 #include <QCameraViewfinder>
 #include <QComboBox>
+#include <QSettings>
 #include <QSpacerItem>
 #include <QTimer>
 #include <QVariant>
@@ -22,7 +23,7 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit MainWindow(QWidget *parent = 0);
+    explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
 private:
@@ -32,15 +33,20 @@ private:
     DataAwareComboBox *cameraComboBox;
     QAction *cameraComboBoxAction;
     QTimer *fpsTimer;
+    unsigned int framesInCurrentSecond = 0;
+
+    QString outputDirectoryPath;
 
     void detectCameras();
-    unsigned int framesInCurrentSecond = 0;
+    void readSettings();
+    void writeSettings();
 
 private slots:
     void toggleCamera(bool enable);
     void processFrame(const QVideoFrame &frame);
     void onCameraChanged(const QSharedPointer<QCamera> &cameraPtr);
     void updateFps();
+    void chooseOutputDirectory();
 };
 
 #endif // MAINWINDOW_H

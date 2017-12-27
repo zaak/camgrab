@@ -16,7 +16,7 @@ private:
     QCameraInfo selectedCameraInfo;
 
 public:
-    CameraManager(QObject *parent = 0);
+    CameraManager(QObject *parent = nullptr);
     QList<QCameraInfo> listCameras();
     QSharedPointer<QCamera> getCameraByDeviceName(const QString &deviceName);
     QSharedPointer<QCamera> getSelectedCamera();

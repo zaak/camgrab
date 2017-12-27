@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "console.h"
+#include <QFileDialog>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -9,6 +10,8 @@ MainWindow::MainWindow(QWidget *parent) :
     fpsTimer(new QTimer(this))
 {
     ui->setupUi(this);
+    readSettings();
+    showMaximized();
     Console::setOutputControl(ui->consoleOutput);
 
     QWidget *horizontalSpacer = new QWidget(ui->mainToolBar);
@@ -77,9 +80,6 @@ void MainWindow::toggleCamera(bool enable)
         camera->load();
         camera->start();
         fpsTimer->start(1000);
-
-        qDebug() << "MainWindow::toggleCamera" << camera->supportedViewfinderResolutions();
-        qDebug() << "MainWindow::toggleCamera" << camera->supportedViewfinderPixelFormats();
     } else {
         Console::log(QString("Stopping camera %1").arg(cameraInfo.description()));
         camera->stop();
@@ -97,4 +97,35 @@ void MainWindow::updateFps()
 {
     ui->statusBar->showMessage(QString("%1 FPS").arg(framesInCurrentSecond));
     framesInCurrentSecond = 0;
+}
+
+void MainWindow::chooseOutputDirectory()
+{
+    QString outDirPath = QFileDialog::getExistingDirectory(this, tr("Output directory"), outputDirectoryPath, QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
+
+    if (!outDirPath.isEmpty()) {
+        outputDirectoryPath = outDirPath;
+        ui->outDirEdit->setText(outputDirectoryPath);
+        writeSettings();
+        Console::log(QString("Changed output directory to %1").arg(outputDirectoryPath));
+    }
+}
+
+void MainWindow::readSettings()
+{
+    QSettings settings;
+
+    settings.beginGroup("output");
+    outputDirectoryPath = settings.value("directory").toString();
+    ui->outDirEdit->setText(outputDirectoryPath);
+    settings.endGroup();
+}
+
+void MainWindow::writeSettings()
+{
+    QSettings settings;
+
+    settings.beginGroup("output");
+    settings.setValue("directory", outputDirectoryPath);
+    settings.endGroup();
 }
