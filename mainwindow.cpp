@@ -27,7 +27,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(cameraManager, SIGNAL(changedSelectedCamera(QSharedPointer<QCamera>)), this, SLOT(onCameraChanged(QSharedPointer<QCamera>)));
 
     connect(fpsTimer, SIGNAL(timeout()), this, SLOT(updateFps()));
-    connect(ui->cameraViewFinder->getVideoSurface(), SIGNAL(frameReceived(QVideoFrame)), this, SLOT(processFrame(QVideoFrame)));
+    connect(ui->cameraViewFinder->getVideoSurface(), SIGNAL(frameReceived(cv::Mat&)), this, SLOT(processFrame(cv::Mat&)));
 
     ui->consoleDockWidget->setVisible(false);
     ui->settingsDockWidget->setVisible(false);
@@ -91,7 +91,7 @@ void MainWindow::toggleCamera(bool enable)
     }
 }
 
-void MainWindow::processFrame(const QVideoFrame &frame)
+void MainWindow::processFrame(cv::Mat &mat)
 {
     ++framesInCurrentSecond;
 }

@@ -43,8 +43,14 @@ QList<QVideoFrame::PixelFormat> GLVideoSurface::supportedPixelFormats(QAbstractV
 
 bool GLVideoSurface::present(const QVideoFrame &frame)
 {
-    emit frameReceived(frame);
+    QVideoFrame bufferFrame(frame);
+    bufferFrame.map(QAbstractVideoBuffer::ReadOnly);
 
+    cv::Mat mat = cv::Mat(bufferFrame.height(), bufferFrame.width(), CV_8UC3, bufferFrame.bits());
+
+    emit frameReceived(mat);
+
+    bufferFrame.unmap();
     return true;
 }
 

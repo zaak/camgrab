@@ -2,6 +2,8 @@
 #define GLVIDEOSURFACE_H
 
 #include <QAbstractVideoSurface>
+#include <opencv2/opencv.hpp>
+#include <opencv2/core/core.hpp>
 
 class GLVideoSurface: public QAbstractVideoSurface
 {
@@ -16,7 +18,7 @@ public:
     void stop();
 
 signals:
-    void frameReceived(const QVideoFrame& frame);
+    void frameReceived(cv::Mat &mat);
     void presentationStarted();
     void presentationStopped();
 };

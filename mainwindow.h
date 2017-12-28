@@ -13,6 +13,7 @@
 #include <QVideoProbe>
 #include "cameramanager.h"
 #include "dataawarecombobox.h"
+#include "glvideowidget.h"
 
 namespace Ui {
 class MainWindow;
@@ -43,7 +44,7 @@ private:
 
 private slots:
     void toggleCamera(bool enable);
-    void processFrame(const QVideoFrame &frame);
+    void processFrame(cv::Mat &mat);
     void onCameraChanged(const QSharedPointer<QCamera> &cameraPtr);
     void updateFps();
     void chooseOutputDirectory();
