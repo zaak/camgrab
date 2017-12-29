@@ -22,7 +22,9 @@ SOURCES += \
     cameramanager.cpp \
     dataawarecombobox.cpp \
     glvideosurface.cpp \
-    glvideowidget.cpp
+    glvideowidget.cpp \
+    filters/abstractfilter.cpp \
+    filters/facedetectfilter.cpp
 
 HEADERS += \
     mainwindow.h \
@@ -30,7 +32,9 @@ HEADERS += \
     cameramanager.h \
     dataawarecombobox.h \
     glvideosurface.h \
-    glvideowidget.h
+    glvideowidget.h \
+    filters/abstractfilter.h \
+    filters/facedetectfilter.h
 
 FORMS += \
     mainwindow.ui

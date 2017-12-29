@@ -4,7 +4,6 @@ GLVideoWidget::GLVideoWidget(QWidget *parent):
     QOpenGLWidget(parent),
     videoSurface(new GLVideoSurface(this))
 {
-
     connect(videoSurface, SIGNAL(frameReceived(cv::Mat&)), this, SLOT(renderFrame(cv::Mat&)));
     connect(videoSurface, SIGNAL(presentationStopped()), this, SLOT(cleanup()));
 

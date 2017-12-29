@@ -6,15 +6,8 @@
 #include <QOpenGLShaderProgram>
 #include <QDebug>
 #include <QOpenGLTexture>
-#include <opencv2/core/core.hpp>
-#include <opencv2/objdetect.hpp>
-#include <opencv2/highgui.hpp>
-#include <opencv2/imgproc.hpp>
-#include <opencv2/cudaobjdetect.hpp>
-#include <opencv2/cudaimgproc.hpp>
-#include <opencv2/cudawarping.hpp>
-
 #include "glvideosurface.h"
+#include "filters/facedetectfilter.h"
 
 class GLVideoWidget : public QOpenGLWidget
 {
@@ -39,8 +32,8 @@ private:
     QPoint renderPosition;
     QSize renderSize;
     cv::Mat opencvFrame;
+    QList<QSharedPointer<AbstractFilter>> filters;
 
-    cv::Ptr<cv::cuda::CascadeClassifier> face_cascade_gpu;
     void calculateRenderPosition();
 
 private slots:
@@ -48,7 +41,7 @@ private slots:
 
 public slots:
     void showImage(const QImage& image);
-    void renderFrame(cv::Mat &mat);
+    void renderFrame(cv::Mat &frame);
 };
 
 #endif // GLVIDEOWIDGET_H
