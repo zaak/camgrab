@@ -13,9 +13,6 @@ void FaceDetectFilter::apply(cv::Mat &mat)
 {
     std::vector<cv::Rect> faces;
     cv::Mat grayedFrame;
-    cv::Mat crop;
-    cv::Mat res;
-    cv::Mat gray;
 
     cv::cvtColor(mat, grayedFrame, cv::COLOR_BGR2GRAY);
     cv::equalizeHist(grayedFrame, grayedFrame);
