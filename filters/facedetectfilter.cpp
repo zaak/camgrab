@@ -1,9 +1,12 @@
 #include "facedetectfilter.h"
+#include <QApplication>
 
 FaceDetectFilter::FaceDetectFilter(QObject *parent): AbstractFilter(parent)
 {
     name = "Face detect";
-    faceCascadeFilterGPU = cv::cuda::CascadeClassifier::create("/media/zaak/Data/dev/CamGrab/opencv/data/haarcascades_cuda/haarcascade_frontalface_alt2.xml");
+
+    QString faceCascadePath = QApplication::applicationDirPath() + "/haarcascades_cuda/haarcascade_frontalface_alt2.xml";
+    faceCascadeFilterGPU = cv::cuda::CascadeClassifier::create(faceCascadePath.toStdString());
 }
 
 void FaceDetectFilter::apply(cv::Mat &mat)

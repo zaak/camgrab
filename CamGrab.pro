@@ -45,3 +45,8 @@ DISTFILES +=
 
 RESOURCES += \
     resources.qrc
+
+
+linux {
+    QMAKE_PRE_LINK += rm -rf $${OUT_PWD}/haarcascades_cuda && mkdir $${OUT_PWD}/haarcascades_cuda && cp -r $${PWD}/haarcascades_cuda/*.xml $${OUT_PWD}/haarcascades_cuda
+}
