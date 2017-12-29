@@ -46,6 +46,10 @@ bool GLVideoSurface::present(const QVideoFrame &frame)
     QVideoFrame bufferFrame(frame);
     bufferFrame.map(QAbstractVideoBuffer::ReadOnly);
 
+    if (!bufferFrame.isValid()) {
+        return false;
+    }
+
     cv::Mat mat = cv::Mat(bufferFrame.height(), bufferFrame.width(), CV_8UC3, bufferFrame.bits());
 
     emit frameReceived(mat);

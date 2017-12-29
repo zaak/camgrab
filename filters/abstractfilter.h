@@ -10,10 +10,15 @@ class AbstractFilter : public QObject
 public:
     explicit AbstractFilter(QObject *parent = nullptr);
     virtual void apply(cv::Mat &mat) = 0;
+    bool isEnabled();
+    const QString &getName();
 
-signals:
+protected:
+    QString name;
+    bool enabled;
 
 public slots:
+    void setEnabled(bool enable);
 };
 
 #endif // ABSTRACTFILTER_H

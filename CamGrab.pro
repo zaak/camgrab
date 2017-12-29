@@ -24,7 +24,8 @@ SOURCES += \
     glvideosurface.cpp \
     glvideowidget.cpp \
     filters/abstractfilter.cpp \
-    filters/facedetectfilter.cpp
+    filters/facedetectfilter.cpp \
+    filters/grayscalefilter.cpp
 
 HEADERS += \
     mainwindow.h \
@@ -34,7 +35,8 @@ HEADERS += \
     glvideosurface.h \
     glvideowidget.h \
     filters/abstractfilter.h \
-    filters/facedetectfilter.h
+    filters/facedetectfilter.h \
+    filters/grayscalefilter.h
 
 FORMS += \
     mainwindow.ui

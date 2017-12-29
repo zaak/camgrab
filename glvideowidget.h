@@ -8,6 +8,7 @@
 #include <QOpenGLTexture>
 #include "glvideosurface.h"
 #include "filters/facedetectfilter.h"
+#include "filters/grayscalefilter.h"
 
 class GLVideoWidget : public QOpenGLWidget
 {
@@ -19,6 +20,7 @@ public:
     explicit GLVideoWidget(QWidget *parent = nullptr);
     GLVideoSurface *getVideoSurface();
     QImage &getRenderedImage();
+    void registerFilter(QSharedPointer<AbstractFilter> filter);
 
 protected:
     void initializeGL();
@@ -42,6 +44,7 @@ private slots:
 public slots:
     void showImage(const QImage& image);
     void renderFrame(cv::Mat &frame);
+    void disableFilters();
 };
 
 #endif // GLVIDEOWIDGET_H

@@ -4,6 +4,8 @@
 #include <QFileDialog>
 #include <QDesktopServices>
 #include <QDate>
+#include <QRadioButton>
+#include <QDebug>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -31,8 +33,11 @@ MainWindow::MainWindow(QWidget *parent) :
 
     ui->consoleDockWidget->setVisible(false);
     ui->settingsDockWidget->setVisible(false);
+    ui->filtersDockWidget->setVisible(false);
 
     detectCameras();
+    ui->filtersFrame->setEnabled(false);
+    registerFilters();
 }
 
 MainWindow::~MainWindow()
@@ -139,7 +144,6 @@ void MainWindow::openOutputDirectory()
     QDesktopServices::openUrl(QUrl::fromLocalFile(outputDirPath));
 }
 
-
 bool MainWindow::grabImage()
 {
     QImage &renderedImage = ui->cameraViewFinder->getRenderedImage();
@@ -157,4 +161,40 @@ bool MainWindow::grabImage()
     }
 
     return imageSaved;
+}
+
+void MainWindow::registerFilters()
+{
+    registerFilter(QSharedPointer<AbstractFilter>(new FaceDetectFilter()));
+    registerFilter(QSharedPointer<AbstractFilter>(new GrayscaleFilter()));
+}
+
+void MainWindow::registerFilter(QSharedPointer<AbstractFilter> filterPtr)
+{
+    ui->cameraViewFinder->registerFilter(filterPtr);
+
+    AbstractFilter *filter = filterPtr.data();
+
+    QRadioButton *filterRadioButton = new QRadioButton(filter->getName(), ui->filtersFrame);
+    ui->filtersFrame->layout()->addWidget(filterRadioButton);
+    connect(filterRadioButton, SIGNAL(toggled(bool)), filter, SLOT(setEnabled(bool)));
+}
+
+void MainWindow::enableFilters(bool enabled)
+{
+    if (!enabled) {
+        ui->cameraViewFinder->disableFilters();
+
+        foreach(QObject *child, ui->filtersFrame->children()) {
+            QRadioButton *filterRadioButton = qobject_cast<QRadioButton*>(child);
+
+            if (filterRadioButton) {
+                filterRadioButton->setAutoExclusive(false);
+                filterRadioButton->setChecked(false);
+                filterRadioButton->setAutoExclusive(true);
+            }
+        }
+    }
+
+    ui->filtersFrame->setEnabled(enabled);
 }

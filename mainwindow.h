@@ -41,6 +41,8 @@ private:
     void detectCameras();
     void readSettings();
     void writeSettings();
+    void registerFilters();
+    void registerFilter(QSharedPointer<AbstractFilter>);
 
 private slots:
     void toggleCamera(bool enable);
@@ -50,6 +52,7 @@ private slots:
     void chooseOutputDirectory();
     void openOutputDirectory();
     bool grabImage();
+    void enableFilters(bool enable);
 };
 
 #endif // MAINWINDOW_H

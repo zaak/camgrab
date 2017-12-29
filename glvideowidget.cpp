@@ -4,12 +4,10 @@ GLVideoWidget::GLVideoWidget(QWidget *parent):
     QOpenGLWidget(parent),
     videoSurface(new GLVideoSurface(this))
 {
-
     connect(videoSurface, SIGNAL(frameReceived(cv::Mat&)), this, SLOT(renderFrame(cv::Mat&)));
     connect(videoSurface, SIGNAL(presentationStopped()), this, SLOT(cleanup()));
 
-    //qDebug() << "Haar loaded: " << face_cascade_gpu;
-    filters.append(QSharedPointer<AbstractFilter>(new FaceDetectFilter()));
+//    registerFilter(QSharedPointer<AbstractFilter>(new FaceDetectFilter()));
 }
 
 GLVideoSurface *GLVideoWidget::getVideoSurface()
@@ -89,8 +87,11 @@ void GLVideoWidget::showImage(const QImage& image)
 
 void GLVideoWidget::renderFrame(cv::Mat &mat)
 {
-    foreach (const QSharedPointer<AbstractFilter> &filter, filters) {
-        filter.data()->apply(mat);
+    foreach (const QSharedPointer<AbstractFilter> &filterPtr, filters) {
+        AbstractFilter *filter = filterPtr.data();
+        if (filter->isEnabled()) {
+            filter->apply(mat);
+        }
     }
 
     cv::cvtColor(mat, opencvFrame, CV_BGR2RGBA);
@@ -106,4 +107,19 @@ void GLVideoWidget::cleanup()
 QImage &GLVideoWidget::getRenderedImage()
 {
     return renderedImage;
+}
+
+void GLVideoWidget::registerFilter(QSharedPointer<AbstractFilter> filter)
+{
+    filters.append(filter);
+}
+
+void GLVideoWidget::disableFilters()
+{
+    foreach (const QSharedPointer<AbstractFilter> &filterPtr, filters) {
+        AbstractFilter *filter = filterPtr.data();
+        if (filter->isEnabled()) {
+            filter->setEnabled(false);
+        }
+    }
 }
