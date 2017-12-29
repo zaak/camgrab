@@ -2,6 +2,8 @@
 
 Qt + OpenCV based camera tool.
 
+![screenshot_2017-12-29_14-50-00](https://user-images.githubusercontent.com/803299/34442356-d7f6a2c4-ecc1-11e7-8e56-8eba3d662d9e.png)
+
 ## Prerequisites
 
  * [Qt 5.10+](https://download.qt.io/archive/qt/)
@@ -26,7 +28,7 @@ make install
 ### Building the application
 
 ```
-git clone git://github.com/zaak/camgrab.git
+git clone https://github.com/zaak/camgrab.git
 ```
 
 Open `CamGrab.pro` in Qt Creator or:
